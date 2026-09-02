@@ -1,0 +1,8 @@
+const settingsDefaults = { theme: 'dark', fontSize: 'medium', readerWidth: 'normal', fontFamily: 'serif' };
+function readStorage(key, fallback) { try { const value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); } catch { return fallback; } }
+function writeStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage may be disabled */ } }
+function getSettings() { return { ...settingsDefaults, ...readStorage('story_settings', {}) }; }
+function applySettings() { const settings = getSettings(); document.documentElement.dataset.theme = settings.theme; document.documentElement.style.setProperty('--reader-size', {small:'.98rem',medium:'1.17rem',large:'1.34rem',xlarge:'1.52rem'}[settings.fontSize] || '1.17rem'); document.documentElement.style.setProperty('--reader-font', settings.fontFamily === 'sans' ? 'var(--sans)' : 'var(--display)'); document.documentElement.dataset.readerWidth = settings.readerWidth; }
+function saveSetting(name, value) { const settings = { ...getSettings(), [name]: value }; writeStorage('story_settings', settings); applySettings(); document.querySelectorAll(`[data-setting="${name}"]`).forEach(button => button.classList.toggle('active', button.dataset.value === value)); }
+function initSettings() { applySettings(); document.querySelectorAll('[data-setting]').forEach(button => button.addEventListener('click', () => saveSetting(button.dataset.setting, button.dataset.value))); }
+initSettings();

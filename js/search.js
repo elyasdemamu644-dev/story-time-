@@ -1,0 +1,1 @@
+function filterChapters(query) { const normalized = query.trim().toLowerCase(); return chapters.filter(chapter => chapter.status !== 'draft' && (!normalized || [chapter.id, chapter.title, chapter.subtitle, ...(chapter.keywords || [])].join(' ').toLowerCase().includes(normalized))); }
